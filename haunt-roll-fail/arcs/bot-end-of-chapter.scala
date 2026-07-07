@@ -15,7 +15,7 @@ import hrf.base._
 import hrf.bot._
 
 
-class BotEOC(faction : Faction, bot : Faction => EvalBot) extends EvalBot {
+class BotEOC(faction : Faction, bot : Faction => EvalBot, val candidatesLimit: Int = 8, val rerunsLimit: Int = 12) extends EvalBot {
     def pwr(f : Faction)(implicit game : Game) = f.power * 100 + (f.power >= game.factions.num @@ {
         case 2 => 33
         case 3 => 30
@@ -62,7 +62,7 @@ class BotEOC(faction : Faction, bot : Faction => EvalBot) extends EvalBot {
         val bots = game.factions./(e => e -> bot(e)).toMap
 
         bots(faction).eval(actions).flatMap { l =>
-            val prime = l.sortWith(EvalBot.compare).take(24)./(_.action)
+            val prime = l.sortWith(EvalBot.compare).take(candidatesLimit)./(_.action)
             // val runs = prime./~((10 + game.round * game.factions.num * 0).times) ++ actions.diff(prime).shuffle.take(0)./~(2.times)
             val runs = prime./~(1.times)
 
@@ -135,7 +135,7 @@ class BotEOC(faction : Faction, bot : Faction => EvalBot) extends EvalBot {
                                 ))}
                             )
                         else {
-                            reruns = ll./~((24*(1 + game.round)/ll.num).times)
+                            reruns = ll./~((rerunsLimit*(1 + game.round)/ll.num).times)
                             None
                         }
                     }

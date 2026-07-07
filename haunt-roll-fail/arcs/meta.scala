@@ -441,8 +441,8 @@ trait CommonMeta extends MetaGame {
     def getBot(f : Faction, b : String) = {
         val baseBot = (f, b) match {
             case (f, "Fácil") => new BotNew(f, true)
-            case (f, "Medio") => new BotEOC(f, e => new BotNew(e, true))
-            case (f, "Difícil") => new BotEOC(f, e => new BotNew(e, false))
+            case (f, "Medio") => new BotEOC(f, e => new BotNew(e, true), candidatesLimit = 6, rerunsLimit = 8)
+            case (f, "Difícil") => new BotEOC(f, e => new BotNew(e, false), candidatesLimit = 10, rerunsLimit = 16)
             case (f, _) => new BotOld(f)
         }
         if (AI.enabled) {
