@@ -1,0 +1,25 @@
+# Compilation targets
+**/target/
+**/project/project/
+**/project/target/
+
+# IDE and tool caches
+.idea/
+.metals/
+.bsp/
+.vscode/
+.history/
+.env
+
+# JVM and OS files
+*.class
+*.log
+*.lck
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Local database temp files
+good-game-database.lck
+good-game-database.log
+good-game-database.tmp/
