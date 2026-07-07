@@ -63,7 +63,7 @@ object Runner {
             def option(implicit g : G) = desc
         }
 
-        var manualRollState: Option[(Continue, List[Die[_]], List[String], List[Any], List[Any] => UIState, F)] = None
+        var manualRollState: Option[(Continue, $[Die[_]], $[String], $[Any], $[Any] => UIState, F)] = None
 
         def getDieValues(die : Die[_]) : $[Any] = die match {
             case d : CustomDie[_] => d.values
@@ -661,9 +661,8 @@ object Runner {
                     if (allDice.isEmpty) {
                         UIRecord("#roll", c, rolled($()))
                     } else {
-                        manualRollState = Some((c, dice.toList, dice./(_ => dieType).toList, $(), results => {
-                            val typedResults = results.asInstanceOf[List[Any]]
-                            UIRecord("#roll_manual", c, rolled($(typedResults: _*).asInstanceOf[Nothing]))
+                        manualRollState = Some((c, dice, dice./(_ => dieType), $(), results => {
+                            UIRecord("#roll_manual", c, rolled(results.asInstanceOf[Nothing]))
                         }, faction))
                         
                         val nextDie = dice.head
@@ -687,10 +686,10 @@ object Runner {
                     if (allDice.isEmpty) {
                         UIRecord("#roll2", c, rolled($(), $()))
                     } else {
-                        manualRollState = Some((c, allDice.map(x => x._1).toList, allDice.map(x => x._2).toList, $(), results => {
-                            val res1 = results.take(dice1.length).asInstanceOf[List[Any]]
-                            val res2 = results.drop(dice1.length).asInstanceOf[List[Any]]
-                            UIRecord("#roll2_manual", c, rolled($(res1: _*).asInstanceOf[Nothing], $(res2: _*).asInstanceOf[Nothing]))
+                        manualRollState = Some((c, $(allDice.map(x => x._1): _*), $(allDice.map(x => x._2): _*), $(), results => {
+                            val res1 = results.take(dice1.length)
+                            val res2 = results.drop(dice1.length)
+                            UIRecord("#roll2_manual", c, rolled(res1.asInstanceOf[Nothing], res2.asInstanceOf[Nothing]))
                         }, faction))
                         
                         val (nextDie, dieType) = allDice.head
@@ -714,11 +713,11 @@ object Runner {
                     if (allDice.isEmpty) {
                         UIRecord("#roll3", c, rolled($(), $(), $()))
                     } else {
-                        manualRollState = Some((c, allDice.map(x => x._1).toList, allDice.map(x => x._2).toList, $(), results => {
-                            val res1 = results.take(dice1.length).asInstanceOf[List[Any]]
-                            val res2 = results.slice(dice1.length, dice1.length + dice2.length).asInstanceOf[List[Any]]
-                            val res3 = results.drop(dice1.length + dice2.length).asInstanceOf[List[Any]]
-                            UIRecord("#roll3_manual", c, rolled($(res1: _*).asInstanceOf[Nothing], $(res2: _*).asInstanceOf[Nothing], $(res3: _*).asInstanceOf[Nothing]))
+                        manualRollState = Some((c, $(allDice.map(x => x._1): _*), $(allDice.map(x => x._2): _*), $(), results => {
+                            val res1 = results.take(dice1.length)
+                            val res2 = results.slice(dice1.length, dice1.length + dice2.length)
+                            val res3 = results.drop(dice1.length + dice2.length)
+                            UIRecord("#roll3_manual", c, rolled(res1.asInstanceOf[Nothing], res2.asInstanceOf[Nothing], res3.asInstanceOf[Nothing]))
                         }, faction))
                         
                         val (nextDie, dieType) = allDice.head
@@ -731,7 +730,6 @@ object Runner {
                         }
                         UIAsk(c, Some(faction), actions, $)
                     }
-
                 case UIContinue(c @ Roll(dice, rolled, _), Nil) =>
                     dirty = true
                     UIRecord("#roll", c, rolled(dice./(_.roll())))
