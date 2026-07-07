@@ -33,17 +33,18 @@ case object Yellow extends Faction
 
 
 trait Resource extends NamedToString with Styling with Record {
-    override def elem = name.styled(this)
+    def nameES : String
+    override def elem = nameES.styled(this)
     val supply = Supply(this)
     lazy val token = elem ~ Image(this.id, styles.token)
     val order : Int
 }
 
-case object Material extends Resource { val order = 100; override def name = "Materiales" }
-case object Fuel extends Resource { val order = 200; override def name = "Combustible" }
-case object Weapon extends Resource { val order = 300; override def name = "Armas" }
-case object Relic extends Resource { val order = 400; override def name = "Reliquias" }
-case object Psionic extends Resource { val order = 500; override def name = "Psiónicos" }
+case object Material extends Resource { val order = 100; def nameES = "Materiales" }
+case object Fuel extends Resource { val order = 200; def nameES = "Combustible" }
+case object Weapon extends Resource { val order = 300; def nameES = "Armas" }
+case object Relic extends Resource { val order = 400; def nameES = "Reliquias" }
+case object Psionic extends Resource { val order = 500; def nameES = "Psiónicos" }
 
 case object Nothingness extends ResourceLike {
     val id = "nothingness"
@@ -229,22 +230,24 @@ case object Empath extends Ambition { val strength = 6; override def name = "Emp
 trait Suit extends NamedToString with Styling with Record {
     val sortKey : Int
     val sub : $[Suit] = $(this)
+    def nameES : String
+    override def elem : Elem = nameES.styled(this)
 }
 
-case object Administration extends Suit { val sortKey = 2; override def name = "Administración" }
-case object Aggression extends Suit { val sortKey = 4; override def name = "Agresión" }
-case object Construction extends Suit { val sortKey = 1; override def name = "Construcción" }
-case object Mobilization extends Suit { val sortKey = 3; override def name = "Movilización" }
+case object Administration extends Suit { val sortKey = 2; def nameES = "Administración" }
+case object Aggression extends Suit { val sortKey = 4; def nameES = "Agresión" }
+case object Construction extends Suit { val sortKey = 1; def nameES = "Construcción" }
+case object Mobilization extends Suit { val sortKey = 3; def nameES = "Movilización" }
 
 case object Faithful extends Suit {
     val sortKey = 5
     override val sub : $[Suit] = $(Faithful, Zeal, Wisdom)
-    override def name = "Fieles"
+    def nameES = "Fieles"
 }
-case object Zeal extends Suit { val sortKey = 6; override def name = "Fervor" }
-case object Wisdom extends Suit { val sortKey = 7; override def name = "Sabiduría" }
+case object Zeal extends Suit { val sortKey = 6; def nameES = "Fervor" }
+case object Wisdom extends Suit { val sortKey = 7; def nameES = "Sabiduría" }
 
-case object Event extends Suit { val sortKey = 999; override def name = "Evento" }
+case object Event extends Suit { val sortKey = 999; def nameES = "Evento" }
 
 trait StandardAction extends Record
 case object Tax extends StandardAction
@@ -272,16 +275,16 @@ trait DeckCard extends Elementary with Record {
 
 case class ActionCard(suit : Suit, strength : Int, pips : Int) extends DeckCard {
     def id = suit.id + "-" + strength
-    def name = suit.name + " " + strength
-    def elem = (" " + suit + " " + strength + " ").pre.spn(styles.outlined).styled(suit)
-    def zeroed(b : Boolean) = (" " + suit + " " + b.?(0).|(strength) + " ").pre.spn(styles.outlined).styled(suit)
+    def name = suit.nameES + " " + strength
+    def elem = (" " + suit.nameES + " " + strength + " ").pre.spn(styles.outlined).styled(suit)
+    def zeroed(b : Boolean) = (" " + suit.nameES + " " + b.?(0).|(strength) + " ").pre.spn(styles.outlined).styled(suit)
 }
 
 case class EventCard(index : Int) extends DeckCard {
     def suit = Event
     def id = "event"
-    def name = "Event"
-    def elem = (" " + suit + " ").pre.spn(styles.outlined)
+    def name = "Evento"
+    def elem = (" " + suit.nameES + " ").pre.spn(styles.outlined)
     def strength = 0
     def pips = 0
 }

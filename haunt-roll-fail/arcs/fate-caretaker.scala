@@ -22,11 +22,11 @@ case object Caretaker extends Fate("Caretaker", "fate05", 1) {
 }
 
 
-abstract class GolemType(val id : String, override val name : String, val order : Int) extends Resource
-case object WarriorGolem extends GolemType("warrior", "Warrior", 600)
-case object ProtectorGolem extends GolemType("protector", "Protector", 700)
-case object SeekerGolem extends GolemType("seeker", "Seeker", 800)
-case object HarvesterGolem extends GolemType("harvester", "Harvester", 900)
+abstract class GolemType(val id : String, override val name : String, val order : Int, val nameES : String) extends Resource
+case object WarriorGolem extends GolemType("warrior", "Warrior", 600, "Golem Guerrero")
+case object ProtectorGolem extends GolemType("protector", "Protector", 700, "Golem Protector")
+case object SeekerGolem extends GolemType("seeker", "Seeker", 800, "Golem Buscador")
+case object HarvesterGolem extends GolemType("harvester", "Harvester", 900, "Golem Cosechador")
 
 case class ProtoGolem(golem : GolemType) extends Piece
 
