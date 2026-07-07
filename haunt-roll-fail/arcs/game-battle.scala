@@ -238,7 +238,7 @@ object BattleExpansion extends Expansion {
                     effect./("with" -> _)
                 )
 
-            Roll3[$[BattleResult], $[BattleResult], $[BattleResult]](n1.times(Skirmish.die), n2.times(Assault.die), n3.times(Raid.die), (l1, l2, l3) => BattleRolledAction(f, s, allies, e, o1, o2, o3, l1, l2, l3, used ++ effect, then))
+            Roll3[$[BattleResult], $[BattleResult], $[BattleResult]](n1.times(Skirmish.die), n2.times(Assault.die), n3.times(Raid.die), (l1, l2, l3) => BattleRolledAction(f, s, allies, e, o1, o2, o3, l1, l2, l3, used ++ effect, then), f)
 
         case BattleRolledAction(f, s, allies, e, o1, o2, o3, n1, n2, n3, used, then) =>
             f.log("rolled",

@@ -9,6 +9,10 @@ object AI {
     var enabled : Boolean = false
 }
 
+object ManualRoll {
+    var enabled : Boolean = false
+}
+
 class FetchCompute(prompt: String) extends Compute[String] {
     var result: Option[String] = None
 

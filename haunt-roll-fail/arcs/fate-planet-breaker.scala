@@ -370,7 +370,7 @@ object PlanetBreakerExpansion extends FateExpansion(PlanetBreaker) {
                 stay
             }
             else
-                Roll[$[BattleResult]](Influence(lane).num.times(Skirmish.die), l => PlanetEaterLooseBattleAction(f, l, v, stay, then))
+                Roll[$[BattleResult]](Influence(lane).num.times(Skirmish.die), l => PlanetEaterLooseBattleAction(f, l, v, stay, then), f)
 
         // case PlanetEaterLooseBattleAction(f, rolled, v, stay, then) if game.declared.contains(Empath) && f.hasLore(EmpathsVision) && f.used.has(EmpathsVision).not =>
         //     Ask(f).group(EmpathsVision)

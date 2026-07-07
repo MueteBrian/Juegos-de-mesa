@@ -58,6 +58,34 @@ object Runner {
         var check : Option[meta.G] = None
         var game = newGame()
 
+        case class ManualRollSelectAction(dieIndex: Int, dieType: String, faceIndex: Int, value: Any, desc: Elem) extends UserAction with UserActionClass[ManualRollSelectAction] {
+            def question(implicit g : G) = "Dado".txt
+            def option(implicit g : G) = desc
+        }
+
+        var manualRollState: Option[(Continue, List[Die[_]], List[String], List[Any], List[Any] => Unit, F)] = None
+
+        def getDieValues(die : Die[_]) : $[Any] = die match {
+            case d : CustomDie[_] => d.values
+            case d : StraitDie => (d.low to d.high).$
+            case _ => $()
+        }
+
+        def describeFace(value: Any): String = value match {
+            case s: Seq[_] =>
+                if (s.isEmpty) "Vacio"
+                else s.map(x => x.toString match {
+                    case "OwnDamage" => "Dano Propio"
+                    case "Intercept" => "Interceptacion"
+                    case "HitShip" => "Impacto Nave"
+                    case "HitBuilding" => "Impacto Edificio"
+                    case "RaidKey" => "Llave"
+                    case other => other
+                }).mkString(", ")
+            case Nil => "Vacio"
+            case x => x.toString
+        }
+
         ui.currentGame = game
 
         var actions : $[ExternalAction] = $
@@ -621,6 +649,91 @@ object Runner {
                     }).shuffle.take(1).single // shuffle !!
 
                     debug || human || bot | UIWait(c, waits)
+
+                case UIContinue(c @ Roll(dice, rolled, tag), Nil) if meta.name == "arcs" && arcs.ManualRoll.enabled =>
+                    dirty = true
+                    val faction = tag match {
+                        case f: meta.gaming.F => f
+                        case _ => seating.head
+                    }
+                    val dieType = "skirmish"
+                    val allDice = dice.zipWithIndex.map { case (d, i) => (d, i) }
+                    if (allDice.isEmpty) {
+                        UIRecord("#roll", c, rolled($()))
+                    } else {
+                        manualRollState = Some((c, dice.toList, dice./(_ => dieType).toList, $(), results => {
+                            val typedResults = results.asInstanceOf[List[Any]]
+                            state = UIRecord("#roll_manual", c, rolled(typedResults.asInstanceOf[Nothing]))
+                            continueHandleState()
+                        }, faction))
+                        
+                        val nextDie = dice.head
+                        val faces = getDieValues(nextDie)
+                        val actions: $[UserAction] = faces.zipWithIndex./ { case (faceValue, i) =>
+                            val imgName = s"${dieType}-die-${i + 1}"
+                            val descText = s"Cara ${i + 1}: ${describeFace(faceValue)}"
+                            val descElem = Image(imgName, arcs.elem.styles.inlineToken) ~ " " ~ descText.txt
+                            ManualRollSelectAction(0, dieType, i, faceValue, descElem)
+                        }
+                        UIAsk(c, Some(faction), actions, $)
+                    }
+
+                case UIContinue(c @ Roll2(dice1, dice2, rolled, tag), Nil) if meta.name == "arcs" && arcs.ManualRoll.enabled =>
+                    dirty = true
+                    val faction = tag match {
+                        case f: meta.gaming.F => f
+                        case _ => seating.head
+                    }
+                    val allDice = dice1.map(d => (d, "skirmish")) ++ dice2.map(d => (d, "assault"))
+                    if (allDice.isEmpty) {
+                        UIRecord("#roll2", c, rolled($(), $()))
+                    } else {
+                        manualRollState = Some((c, allDice.map(x => x._1).toList, allDice.map(x => x._2).toList, $(), results => {
+                            val res1 = results.take(dice1.length).asInstanceOf[List[Any]]
+                            val res2 = results.drop(dice1.length).asInstanceOf[List[Any]]
+                            state = UIRecord("#roll2_manual", c, rolled(res1.asInstanceOf[Nothing], res2.asInstanceOf[Nothing]))
+                            continueHandleState()
+                        }, faction))
+                        
+                        val (nextDie, dieType) = allDice.head
+                        val faces = getDieValues(nextDie)
+                        val actions: $[UserAction] = faces.zipWithIndex./ { case (faceValue, i) =>
+                            val imgName = s"${dieType}-die-${i + 1}"
+                            val descText = s"Cara ${i + 1}: ${describeFace(faceValue)}"
+                            val descElem = Image(imgName, arcs.elem.styles.inlineToken) ~ " " ~ descText.txt
+                            ManualRollSelectAction(0, dieType, i, faceValue, descElem)
+                        }
+                        UIAsk(c, Some(faction), actions, $)
+                    }
+
+                case UIContinue(c @ Roll3(dice1, dice2, dice3, rolled, tag), Nil) if meta.name == "arcs" && arcs.ManualRoll.enabled =>
+                    dirty = true
+                    val faction = tag match {
+                        case f: meta.gaming.F => f
+                        case _ => seating.head
+                    }
+                    val allDice = dice1.map(d => (d, "skirmish")) ++ dice2.map(d => (d, "assault")) ++ dice3.map(d => (d, "raid"))
+                    if (allDice.isEmpty) {
+                        UIRecord("#roll3", c, rolled($(), $(), $()))
+                    } else {
+                        manualRollState = Some((c, allDice.map(x => x._1).toList, allDice.map(x => x._2).toList, $(), results => {
+                            val res1 = results.take(dice1.length).asInstanceOf[List[Any]]
+                            val res2 = results.slice(dice1.length, dice1.length + dice2.length).asInstanceOf[List[Any]]
+                            val res3 = results.drop(dice1.length + dice2.length).asInstanceOf[List[Any]]
+                            state = UIRecord("#roll3_manual", c, rolled(res1.asInstanceOf[Nothing], res2.asInstanceOf[Nothing], res3.asInstanceOf[Nothing]))
+                            continueHandleState()
+                        }, faction))
+                        
+                        val (nextDie, dieType) = allDice.head
+                        val faces = getDieValues(nextDie)
+                        val actions: $[UserAction] = faces.zipWithIndex./ { case (faceValue, i) =>
+                            val imgName = s"${dieType}-die-${i + 1}"
+                            val descText = s"Cara ${i + 1}: ${describeFace(faceValue)}"
+                            val descElem = Image(imgName, arcs.elem.styles.inlineToken) ~ " " ~ descText.txt
+                            ManualRollSelectAction(0, dieType, i, faceValue, descElem)
+                        }
+                        UIAsk(c, Some(faction), actions, $)
+                    }
 
                 case UIContinue(c @ Roll(dice, rolled, _), Nil) =>
                     dirty = true

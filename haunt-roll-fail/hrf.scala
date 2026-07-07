@@ -1231,10 +1231,16 @@ class HRFMetaUI(val ui : HRFUI, val meta : MetaGame, delayMainMenu : Int)(implic
                             setupQuestions(page)
                     })) ++
                     (if (meta.name == "arcs") {
-                        $(ZOption("Configurar IA".styled(xstyles.larger125), OnClick(Div(arcs.AI.enabled.?("IA Inteligente: ACTIVADA (Gemini)").|("IA Inteligente: DESACTIVADA"), ZBasic.choice ++ arcs.AI.enabled.$(xstyles.optionOn, xstyles.bold) ++ $(xstyles.optionE))), _ => {
-                            arcs.AI.enabled = !arcs.AI.enabled
-                            setupQuestions(page)
-                        }))
+                        $(
+                            ZOption("Configurar IA".styled(xstyles.larger125), OnClick(Div(arcs.AI.enabled.?("IA Inteligente: ACTIVADA (Gemini)").|("IA Inteligente: DESACTIVADA"), ZBasic.choice ++ arcs.AI.enabled.$(xstyles.optionOn, xstyles.bold) ++ $(xstyles.optionE))), _ => {
+                                arcs.AI.enabled = !arcs.AI.enabled
+                                setupQuestions(page)
+                            }),
+                            ZOption("Modo Dados Físicos".styled(xstyles.larger125), OnClick(Div(arcs.ManualRoll.enabled.?("Dados Físicos: ACTIVADO (Entrada manual)").|("Dados Físicos: DESACTIVADO (Lanzamiento automático)"), ZBasic.choice ++ arcs.ManualRoll.enabled.$(xstyles.optionOn, xstyles.bold) ++ $(xstyles.optionE))), _ => {
+                                arcs.ManualRoll.enabled = !arcs.ManualRoll.enabled
+                                setupQuestions(page)
+                            })
+                        )
                     } else $) ++
                     presets./{ case (title, included, excluded, neu) =>
                         val matches = meta.options.intersect(neu.selected) == meta.options.intersect(options.selected)

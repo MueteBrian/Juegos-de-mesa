@@ -281,7 +281,7 @@ object LoreExpansion extends Expansion {
 
             f.log("fired rifles from", s, "at", e, "in", t, x)
 
-            Roll[$[BattleResult]](min(f.at(s).ships.fresh.num, 6).times(Skirmish.die), l => FireRiflesRolledAction(f, e, t, l, then))
+            Roll[$[BattleResult]](min(f.at(s).ships.fresh.num, 6).times(Skirmish.die), l => FireRiflesRolledAction(f, e, t, l, then), f)
 
         case FireRiflesRolledAction(f, e, t, l, then) =>
             f.log("rolled", l./(x => Image("skirmish-die-" + (Skirmish.die.values.indexed.%(_ == x).indices.shuffle(0) + 1), styles.token)))
@@ -305,7 +305,7 @@ object LoreExpansion extends Expansion {
         case EmpathsVisionFireRiflesAction(f, t, e, o, q, then) =>
             f.log("rerolled", q./(x => Image("skirmish-die-" + (Skirmish.die.values.indexed.%(_ == x).indices.shuffle(0) + 1), styles.token)), "with", EmpathsVision)
 
-            Roll[$[BattleResult]](q.num.times(Skirmish.die), l => EmpathsVisionFireRiflesRolledAction(f, t, e, o, l, then))
+            Roll[$[BattleResult]](q.num.times(Skirmish.die), l => EmpathsVisionFireRiflesRolledAction(f, t, e, o, l, then), f)
 
         case EmpathsVisionFireRiflesRolledAction(f, t, e, o, n, then) =>
             f.log("rolled", n./(x => Image("skirmish-die-" + (Skirmish.die.values.indexed.%(_ == x).indices.shuffle(0) + 1), styles.token)))
