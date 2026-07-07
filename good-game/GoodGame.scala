@@ -161,9 +161,21 @@ object GoodGame {
                 optionalHeaderValueByName("Referer") { referer =>
                     if (referer.exists(_.startsWith(url))) {
                         extractUnmatchedPath { path =>
+                            val pathStr = path.toString
+                            val imgFile = if (pathStr.startsWith("/webp2/")) {
+                                val parts = pathStr.split("/")
+                                if (parts.length >= 5 && parts(3) == "images") {
+                                    val game = parts(2)
+                                    val filename = parts.drop(4).mkString("/")
+                                    new java.io.File("../imagenes/" + game + "/" + filename)
+                                } else null
+                            } else null
+
                             val localFile = new java.io.File(directory + path.toString)
                             if (localFile.exists() && localFile.isFile) {
                                 getFromFile(localFile)
+                            } else if (imgFile != null && imgFile.exists() && imgFile.isFile) {
+                                getFromFile(imgFile)
                             } else {
                                 val targetUri = "https://hrf.im/hrf" + path.toString
                                 val responseFuture = Http().singleRequest(HttpRequest(uri = targetUri))
