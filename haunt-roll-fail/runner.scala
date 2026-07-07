@@ -63,7 +63,7 @@ object Runner {
             def option(implicit g : G) = desc
         }
 
-        var manualRollState: Option[(Continue, List[Die[_]], List[String], List[Any], List[Any] => Unit, F)] = None
+        var manualRollState: Option[(Continue, List[Die[_]], List[String], List[Any], List[Any] => UIState, F)] = None
 
         def getDieValues(die : Die[_]) : $[Any] = die match {
             case d : CustomDie[_] => d.values
@@ -663,8 +663,7 @@ object Runner {
                     } else {
                         manualRollState = Some((c, dice.toList, dice./(_ => dieType).toList, $(), results => {
                             val typedResults = results.asInstanceOf[List[Any]]
-                            state = UIRecord("#roll_manual", c, rolled(typedResults.asInstanceOf[Nothing]))
-                            continueHandleState()
+                            UIRecord("#roll_manual", c, rolled(typedResults.asInstanceOf[Nothing]))
                         }, faction))
                         
                         val nextDie = dice.head
@@ -691,8 +690,7 @@ object Runner {
                         manualRollState = Some((c, allDice.map(x => x._1).toList, allDice.map(x => x._2).toList, $(), results => {
                             val res1 = results.take(dice1.length).asInstanceOf[List[Any]]
                             val res2 = results.drop(dice1.length).asInstanceOf[List[Any]]
-                            state = UIRecord("#roll2_manual", c, rolled(res1.asInstanceOf[Nothing], res2.asInstanceOf[Nothing]))
-                            continueHandleState()
+                            UIRecord("#roll2_manual", c, rolled(res1.asInstanceOf[Nothing], res2.asInstanceOf[Nothing]))
                         }, faction))
                         
                         val (nextDie, dieType) = allDice.head
@@ -720,8 +718,7 @@ object Runner {
                             val res1 = results.take(dice1.length).asInstanceOf[List[Any]]
                             val res2 = results.slice(dice1.length, dice1.length + dice2.length).asInstanceOf[List[Any]]
                             val res3 = results.drop(dice1.length + dice2.length).asInstanceOf[List[Any]]
-                            state = UIRecord("#roll3_manual", c, rolled(res1.asInstanceOf[Nothing], res2.asInstanceOf[Nothing], res3.asInstanceOf[Nothing]))
-                            continueHandleState()
+                            UIRecord("#roll3_manual", c, rolled(res1.asInstanceOf[Nothing], res2.asInstanceOf[Nothing], res3.asInstanceOf[Nothing]))
                         }, faction))
                         
                         val (nextDie, dieType) = allDice.head
@@ -905,6 +902,32 @@ object Runner {
                     waitingFor = $
 
                     a match {
+                        case ManualRollSelectAction(dieIndex, dieType, faceIndex, value, desc) =>
+                            manualRollState match {
+                                case Some((origContinue, dice, types, results, onComplete, faction)) =>
+                                    val newResults = results :+ value
+                                    if (dice.tail.nonEmpty) {
+                                        val nextDice = dice.tail
+                                        val nextTypes = types.tail
+                                        manualRollState = Some((origContinue, nextDice, nextTypes, newResults, onComplete, faction))
+                                        
+                                        val nextDie = nextDice.head
+                                        val nextType = nextTypes.head
+                                        val faces = getDieValues(nextDie)
+                                        val actions: $[UserAction] = faces.zipWithIndex./ { case (faceValue, i) =>
+                                            val imgName = s"${nextType}-die-${i + 1}"
+                                            val descText = s"Cara ${i + 1}: ${describeFace(faceValue)}"
+                                            val descElem = Image(imgName, arcs.elem.styles.inlineToken) ~ " " ~ descText.txt
+                                            ManualRollSelectAction(dieIndex + 1, nextType, i, faceValue, descElem)
+                                        }
+                                        UIAsk(origContinue, Some(faction), actions, $)
+                                    } else {
+                                        manualRollState = None
+                                        onComplete(newResults)
+                                    }
+                                case _ =>
+                                    UIRead(c)
+                            }
                         case a if a.isSoft => UIPerform(a, $)
                         case a => UIRecord("#interactive", c, a)
                     }
