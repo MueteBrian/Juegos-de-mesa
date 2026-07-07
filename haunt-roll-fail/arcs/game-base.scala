@@ -80,37 +80,37 @@ case object Board3CoreConflict extends BaseBoard {
 
 }
 
-case object LoyalEngineers    extends GuildEffect("Loyal Engineers",    Material, 3) with LoyalGuild
-case object MiningInterest    extends GuildEffect("Mining Interest",    Material, 2)
-case object MaterialCartel    extends GuildEffect("Material Cartel",    Material, 2)
-case object AdminUnion        extends GuildEffect("Admin Union",        Material, 2)
-case object ConstructionUnion extends GuildEffect("Construction Union", Material, 2)
-case object FuelCartel        extends GuildEffect("Fuel Cartel",        Fuel,     2)
-case object LoyalPilots       extends GuildEffect("Loyal Pilots",       Fuel,     3) with LoyalGuild
-case object Gatekeepers       extends GuildEffect("Gatekeepers",        Fuel,     2)
-case object ShippingInterest  extends GuildEffect("Shipping Interest",  Fuel,     2)
-case object SpacingUnion      extends GuildEffect("Spacing Union",      Fuel,     2)
-case object ArmsUnion         extends GuildEffect("Arms Union",         Weapon,   2)
-case object PrisonWardens     extends GuildEffect("Prison Wardens",     Weapon,   2)
-case object Skirmishers       extends GuildEffect("Skirmishers",        Weapon,   2)
-case object CourtEnforcers    extends GuildEffect("Court Enforcers",    Weapon,   2)
-case object LoyalMarines      extends GuildEffect("Loyal Marines",      Weapon,   3) with LoyalGuild
-case object LatticeSpies      extends GuildEffect("Lattice Spies",      Psionic,  2)
-case object Farseers          extends GuildEffect("Farseers",           Psionic,  2)
-case object SecretOrder       extends GuildEffect("Secret Order",       Psionic,  2)
-case object LoyalEmpaths      extends GuildEffect("Loyal Empaths",      Psionic,  3) with LoyalGuild
-case object SilverTongues     extends GuildEffect("Silver Tongues",     Psionic,  2)
-case object LoyalKeepers      extends GuildEffect("Loyal Keepers",      Relic,    3) with LoyalGuild
-case object SwornGuardians    extends GuildEffect("Sworn Guardians",    Relic,    1)
-case object ElderBroker       extends GuildEffect("Elder Broker",       Relic,    2)
-case object RelicFence        extends GuildEffect("Relic Fence",        Relic,    2)
-case object GalacticBards     extends GuildEffect("Galactic Bards",     Relic,    1)
-case object MassUprisingBB    extends VoxEffect  ("Mass Uprising")
-case object PopulistDemandsBB extends VoxEffect  ("Populist Demands")
-case object OutrageSpreadsBB  extends VoxEffect  ("Outrage Spreads")
-case object SongOfFreedomBB   extends VoxEffect  ("Song of Freedom")
-case object GuildStruggleBB   extends VoxEffect  ("Guild Struggle")
-case object CallToActionBB    extends VoxEffect  ("Call to Action")
+case object LoyalEngineers    extends GuildEffect("Ingenieros leales",    Material, 3) with LoyalGuild
+case object MiningInterest    extends GuildEffect("Intereses mineros",    Material, 2)
+case object MaterialCartel    extends GuildEffect("Cártel de materiales",    Material, 2)
+case object AdminUnion        extends GuildEffect("Sindicato de administración",        Material, 2)
+case object ConstructionUnion extends GuildEffect("Sindicato de construcción", Material, 2)
+case object FuelCartel        extends GuildEffect("Cártel de combustible",        Fuel,     2)
+case object LoyalPilots       extends GuildEffect("Pilotos leales",       Fuel,     3) with LoyalGuild
+case object Gatekeepers       extends GuildEffect("Guardianes de la puerta",        Fuel,     2)
+case object ShippingInterest  extends GuildEffect("Intereses navieros",  Fuel,     2)
+case object SpacingUnion      extends GuildEffect("Sindicato espacial",      Fuel,     2)
+case object ArmsUnion         extends GuildEffect("Sindicato armamentístico",         Weapon,   2)
+case object PrisonWardens     extends GuildEffect("Guardias de prisión",     Weapon,   2)
+case object Skirmishers       extends GuildEffect("Hostigadores",        Weapon,   2)
+case object CourtEnforcers    extends GuildEffect("Fuerzas de la corte",    Weapon,   2)
+case object LoyalMarines      extends GuildEffect("Marines leales",      Weapon,   3) with LoyalGuild
+case object LatticeSpies      extends GuildEffect("Espías de la red",      Psionic,  2)
+case object Farseers          extends GuildEffect("Clarividentes",           Psionic,  2)
+case object SecretOrder       extends GuildEffect("Orden secreta",       Psionic,  2)
+case object LoyalEmpaths      extends GuildEffect("Empáticos leales",      Psionic,  3) with LoyalGuild
+case object SilverTongues     extends GuildEffect("Charlatanes",     Psionic,  2)
+case object LoyalKeepers      extends GuildEffect("Guardianes leales",      Relic,    3) with LoyalGuild
+case object SwornGuardians    extends GuildEffect("Defensores jurados",    Relic,    1)
+case object ElderBroker       extends GuildEffect("Corredor anciano",       Relic,    2)
+case object RelicFence        extends GuildEffect("Perista de reliquias",        Relic,    2)
+case object GalacticBards     extends GuildEffect("Bardos galácticos",     Relic,    1)
+case object MassUprisingBB    extends VoxEffect  ("Insurrección popular")
+case object PopulistDemandsBB extends VoxEffect  ("Exigencias populistas")
+case object OutrageSpreadsBB  extends VoxEffect  ("La indignación se extiende")
+case object SongOfFreedomBB   extends VoxEffect  ("Canto a la libertad")
+case object GuildStruggleBB   extends VoxEffect  ("Lucha gremial")
+case object CallToActionBB    extends VoxEffect  ("Llamamiento a las armas")
 
 object BaseCards {
     def base = $(

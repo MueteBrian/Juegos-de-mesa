@@ -39,11 +39,11 @@ trait Resource extends NamedToString with Styling with Record {
     val order : Int
 }
 
-case object Material extends Resource { val order = 100 }
-case object Fuel extends Resource { val order = 200 }
-case object Weapon extends Resource { val order = 300 }
-case object Relic extends Resource { val order = 400 }
-case object Psionic extends Resource { val order = 500 }
+case object Material extends Resource { val order = 100; override def name = "Materiales" }
+case object Fuel extends Resource { val order = 200; override def name = "Combustible" }
+case object Weapon extends Resource { val order = 300; override def name = "Armas" }
+case object Relic extends Resource { val order = 400; override def name = "Reliquias" }
+case object Psionic extends Resource { val order = 500; override def name = "Psiónicos" }
 
 case object Nothingness extends ResourceLike {
     val id = "nothingness"
@@ -220,30 +220,31 @@ trait Ambition extends NamedToString with Elementary with Record {
     val strength : Int
 }
 
-case object Tycoon extends Ambition { val strength = 2 }
-case object Tyrant extends Ambition { val strength = 3 }
-case object Warlord extends Ambition { val strength = 4 }
-case object Keeper extends Ambition { val strength = 5 }
-case object Empath extends Ambition { val strength = 6 }
+case object Tycoon extends Ambition { val strength = 2; override def name = "Magnate" }
+case object Tyrant extends Ambition { val strength = 3; override def name = "Tirano" }
+case object Warlord extends Ambition { val strength = 4; override def name = "Señor de la guerra" }
+case object Keeper extends Ambition { val strength = 5; override def name = "Guardián" }
+case object Empath extends Ambition { val strength = 6; override def name = "Empático" }
 
 trait Suit extends NamedToString with Styling with Record {
     val sortKey : Int
     val sub : $[Suit] = $(this)
 }
 
-case object Administration extends Suit { val sortKey = 2 }
-case object Aggression extends Suit { val sortKey = 4 }
-case object Construction extends Suit { val sortKey = 1 }
-case object Mobilization extends Suit { val sortKey = 3 }
+case object Administration extends Suit { val sortKey = 2; override def name = "Administración" }
+case object Aggression extends Suit { val sortKey = 4; override def name = "Agresión" }
+case object Construction extends Suit { val sortKey = 1; override def name = "Construcción" }
+case object Mobilization extends Suit { val sortKey = 3; override def name = "Movilización" }
 
 case object Faithful extends Suit {
     val sortKey = 5
     override val sub : $[Suit] = $(Faithful, Zeal, Wisdom)
+    override def name = "Fieles"
 }
-case object Zeal extends Suit { val sortKey = 6 }
-case object Wisdom extends Suit { val sortKey = 7 }
+case object Zeal extends Suit { val sortKey = 6; override def name = "Fervor" }
+case object Wisdom extends Suit { val sortKey = 7; override def name = "Sabiduría" }
 
-case object Event extends Suit { val sortKey = 999 }
+case object Event extends Suit { val sortKey = 999; override def name = "Evento" }
 
 trait StandardAction extends Record
 case object Tax extends StandardAction

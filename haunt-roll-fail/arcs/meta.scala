@@ -436,15 +436,23 @@ trait CommonMeta extends MetaGame {
 
     def createGame(factions : $[Faction], options : $[O]) = new Game(factions, options)
 
-    def getBots(f : Faction) = $("Easy"/*, "Normal"*/)
+    def getBots(f : Faction) = $("Fácil", "Medio", "Difícil")
 
-    def getBot(f : Faction, b : String) = (f, b) match {
-        case (f, "Easy") => new BotNew(f, true)
-        case (f, "Normal") => new BotEOC(f, e => new BotNew(e, false))
-        case (f, _) => new BotOld(f)
+    def getBot(f : Faction, b : String) = {
+        val baseBot = (f, b) match {
+            case (f, "Fácil") => new BotNew(f, true)
+            case (f, "Medio") => new BotEOC(f, e => new BotNew(e, true))
+            case (f, "Difícil") => new BotEOC(f, e => new BotNew(e, false))
+            case (f, _) => new BotOld(f)
+        }
+        if (AI.enabled) {
+            new BotGemini(f, baseBot)
+        } else {
+            baseBot
+        }
     }
 
-    def defaultBot(f : Faction) = "Easy"
+    def defaultBot(f : Faction) = "Fácil"
 
     def writeFaction(f : Faction) = f.short
     def parseFaction(s : String) : |[Faction] = factions.%(_.short == s).single

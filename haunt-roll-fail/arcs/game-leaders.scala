@@ -84,22 +84,22 @@ abstract class Leader(val id : String, val name : String, val effects : $[Effect
 }
 
 
-case object Elder         extends Leader("leader01", "Elder",         $(Beloved, Just), $(Relic, Material), $(City, Ship, Ship, Ship), $(Starport, Ship, Ship, Ship), $(Ship, Ship))
-case object Mystic        extends Leader("leader02", "Mystic",        $(Attuned, Cryptic), $(Psionic, Relic), $(City, Ship, Ship, Ship), $(Starport, Ship, Ship, Ship), $(Ship, Ship))
-case object FuelDrinker   extends Leader("leader03", "Fuel-Drinker",  $(Insatiable, Lavish), $(Fuel, Fuel), $(City, Ship, Ship, Ship), $(Starport, Ship, Ship, Ship), $(Ship, Ship)) { override val name = "Fuel Drinker" }
-case object Upstart       extends Leader("leader04", "Upstart",       $(Ambitious, Callow), $(Psionic, Material), $(City, Ship, Ship, Ship, Ship), $(Starport, Ship, Ship, Ship), $(Ship, Ship))
-case object Rebel         extends Leader("leader05", "Rebel",         $(Committed, Disorganized), $(Material, Weapon), $(Starport, Ship, Ship, Ship, Ship), $(Ship, Ship, Ship, Ship), $(Ship, Ship))
-case object Warrior       extends Leader("leader06", "Warrior",       $(Tactical, Violent), $(Weapon, Material), $(City, Ship, Ship, Ship), $(Starport, Ship, Ship, Ship), $(Ship, Ship))
-case object Feastbringer  extends Leader("leader07", "Feastbringer",  $(Charismatic, Generous), $(Relic, Material), $(City, Ship, Ship, Ship), $(City, Ship, Ship, Ship), $(Ship, Ship, Ship))
-case object Demagogue     extends Leader("leader08", "Demagogue",     $(Bold, Paranoid), $(Psionic, Weapon), $(City, Ship, Ship, Ship), $(Starport, Ship, Ship, Ship), $(Ship, Ship))
-case object Archivist     extends Leader("leader09", "Archivist",     $(Learned, Academic), $(Relic, Relic), $(City, Ship, Ship, Ship), $(City, Ship, Ship, Ship), $(Ship, Ship))
-case object Overseer      extends Leader("leader10", "Overseer",      $(Ruthless, Hated), $(Fuel, Material), $(City, Ship, Ship, Ship), $(Starport, Ship, Ship, Ship), $(Ship, Ship))
-case object Corsair       extends Leader("leader11", "Corsair",       $(Tricky, Wary), $(Fuel, Weapon), $(Starport, Ship, Ship, Ship, Ship), $(Ship, Ship, Ship), $(Ship, Ship))
+case object Elder         extends Leader("leader01", "Anciano",       $(Beloved, Just), $(Relic, Material), $(City, Ship, Ship, Ship), $(Starport, Ship, Ship, Ship), $(Ship, Ship))
+case object Mystic        extends Leader("leader02", "Místico",       $(Attuned, Cryptic), $(Psionic, Relic), $(City, Ship, Ship, Ship), $(Starport, Ship, Ship, Ship), $(Ship, Ship))
+case object FuelDrinker   extends Leader("leader03", "Bebedor de combustible",  $(Insatiable, Lavish), $(Fuel, Fuel), $(City, Ship, Ship, Ship), $(Starport, Ship, Ship, Ship), $(Ship, Ship)) { override val name = "Bebedor de combustible" }
+case object Upstart       extends Leader("leader04", "Advenedizo",    $(Ambitious, Callow), $(Psionic, Material), $(City, Ship, Ship, Ship, Ship), $(Starport, Ship, Ship, Ship), $(Ship, Ship))
+case object Rebel         extends Leader("leader05", "Rebelde",       $(Committed, Disorganized), $(Material, Weapon), $(Starport, Ship, Ship, Ship, Ship), $(Ship, Ship, Ship, Ship), $(Ship, Ship))
+case object Warrior       extends Leader("leader06", "Guerrero",      $(Tactical, Violent), $(Weapon, Material), $(City, Ship, Ship, Ship), $(Starport, Ship, Ship, Ship), $(Ship, Ship))
+case object Feastbringer  extends Leader("leader07", "Anfitrión",     $(Charismatic, Generous), $(Relic, Material), $(City, Ship, Ship, Ship), $(City, Ship, Ship, Ship), $(Ship, Ship, Ship))
+case object Demagogue     extends Leader("leader08", "Demagogo",      $(Bold, Paranoid), $(Psionic, Weapon), $(City, Ship, Ship, Ship), $(Starport, Ship, Ship, Ship), $(Ship, Ship))
+case object Archivist     extends Leader("leader09", "Archivero",     $(Learned, Academic), $(Relic, Relic), $(City, Ship, Ship, Ship), $(City, Ship, Ship, Ship), $(Ship, Ship))
+case object Overseer      extends Leader("leader10", "Capataz",       $(Ruthless, Hated), $(Fuel, Material), $(City, Ship, Ship, Ship), $(Starport, Ship, Ship, Ship), $(Ship, Ship))
+case object Corsair       extends Leader("leader11", "Corsario",      $(Tricky, Wary), $(Fuel, Weapon), $(Starport, Ship, Ship, Ship, Ship), $(Ship, Ship, Ship), $(Ship, Ship))
 case object Noble         extends Leader("leader12", "Noble",         $(Connected, Influential, Proud), $(Psionic, Psionic), $(City, Ship, Ship, Ship), $(Starport, Ship, Ship, Ship), $(Ship, Ship))
-case object Anarchist     extends Leader("leader13", "Anarchist",     $(Decentralized, Inspiring, Principled), $(Relic, Weapon), $(Ship, Ship, Ship, Ship), $(Ship, Ship, Ship), $(Ship, Ship))
-case object Shaper        extends Leader("leader14", "Shaper",        $(Mythic, Ancient), $(Relic, Material), $(City, Ship, Ship, Ship), $(Ship, Ship, Ship), $(Ship, Ship, Ship))
-case object Agitator      extends Leader("leader15", "Agitator",      $(Firebrand, Irregular), $(Fuel, Material), $(City, Ship, Ship, Ship), $(Starport, Ship, Ship, Ship, Ship), $(Ship, Ship))
-case object Quartermaster extends Leader("leader16", "Quartermaster", $(Resilient, Greedy), $(Fuel, Weapon), $(Starport, Ship, Ship, Ship, Ship), $(Ship, Ship, Ship), $(Ship, Ship))
+case object Anarchist     extends Leader("leader13", "Anarquista",    $(Decentralized, Inspiring, Principled), $(Relic, Weapon), $(Ship, Ship, Ship, Ship), $(Ship, Ship, Ship), $(Ship, Ship))
+case object Shaper        extends Leader("leader14", "Moldeador",     $(Mythic, Ancient), $(Relic, Material), $(City, Ship, Ship, Ship), $(Ship, Ship, Ship), $(Ship, Ship, Ship))
+case object Agitator      extends Leader("leader15", "Agitador",      $(Firebrand, Irregular), $(Fuel, Material), $(City, Ship, Ship, Ship), $(Starport, Ship, Ship, Ship, Ship), $(Ship, Ship))
+case object Quartermaster extends Leader("leader16", "Intendente",    $(Resilient, Greedy), $(Fuel, Weapon), $(Starport, Ship, Ship, Ship, Ship), $(Ship, Ship, Ship), $(Ship, Ship))
 
 
 object Leaders {

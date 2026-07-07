@@ -14,6 +14,21 @@ import akka.stream.ActorMaterializer
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 
 object GoodGame {
+    def getApiKey(): String = {
+        sys.env.get("GEMINI_API_KEY").filter(_.nonEmpty).getOrElse {
+            val paths = List(".env", "C:/Users/cmuet/.env", "/Users/cmuet/.env")
+            paths.map(p => new java.io.File(p)).find(_.exists()).map { file =>
+                val source = scala.io.Source.fromFile(file)
+                try {
+                    val line = source.getLines().find(_.startsWith("GEMINI_API_KEY="))
+                    line.map(_.split("=", 2)(1).trim).getOrElse("")
+                } finally {
+                    source.close()
+                }
+            }.getOrElse("")
+        }
+    }
+
     case class User(name : String, secret : String, id : String)
 
     class Users(tag : Tag) extends Table[User](tag, "Users") {
@@ -313,6 +328,30 @@ object GoodGame {
                         catch {
                             case e : java.sql.SQLIntegrityConstraintViolationException => complete(StatusCodes.Conflict)
                         }
+                    }
+                }
+            } ~
+            (post & path("api" / "gemini" / "decide")) {
+                entity(as[String]) { prompt =>
+                    val apiKey = getApiKey()
+                    if (apiKey.isEmpty) {
+                        complete(StatusCodes.InternalServerError, "GEMINI_API_KEY is not configured")
+                    } else {
+                        val uri = s"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey"
+                        val escapedPrompt = "\"" + prompt.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "") + "\""
+                        val jsonEntity = HttpEntity(ContentTypes.`application/json`, 
+                            s"""{
+                               |  "contents": [{
+                               |    "parts": [{"text": $escapedPrompt}]
+                               |  }]
+                               |}""".stripMargin)
+                        
+                        val responseFuture = Http().singleRequest(HttpRequest(
+                            method = HttpMethods.POST,
+                            uri = uri,
+                            entity = jsonEntity
+                        ))
+                        complete(responseFuture)
                     }
                 }
             }

@@ -1230,6 +1230,12 @@ class HRFMetaUI(val ui : HRFUI, val meta : MetaGame, delayMainMenu : Int)(implic
                             seating = a ++ b.drop(1).take(1) ++ b.take(1) ++ b.drop(2)
                             setupQuestions(page)
                     })) ++
+                    (if (meta.name == "arcs") {
+                        $(ZOption("Configurar IA".styled(xstyles.larger125), OnClick(Div(arcs.AI.enabled.?("IA Inteligente: ACTIVADA (Gemini)").|("IA Inteligente: DESACTIVADA"), ZBasic.choice ++ arcs.AI.enabled.$(xstyles.optionOn, xstyles.bold) ++ $(xstyles.optionE))), _ => {
+                            arcs.AI.enabled = !arcs.AI.enabled
+                            setupQuestions(page)
+                        }))
+                    } else $) ++
                     presets./{ case (title, included, excluded, neu) =>
                         val matches = meta.options.intersect(neu.selected) == meta.options.intersect(options.selected)
                         ZOption("Presets".styled(xstyles.larger125), OnClick(Div(title, ZBasic.choice ++ matches.$(xstyles.optionOn, xstyles.bold) ++ $(xstyles.optionE))), _ => {

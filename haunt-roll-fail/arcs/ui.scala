@@ -1348,7 +1348,7 @@ class UI(val uir : ElementAttachmentPoint, arity : Int, title : String, val opti
             HGap ~
             HGap ~
             (f.leader.any).?{
-                desc("Leader".hl.larger) ~
+                desc("Líder".hl.larger) ~
                 HGap ~
                 HGap ~
                 desc(f.leader./(l => OnClick(l, l.img))) ~
@@ -1360,7 +1360,7 @@ class UI(val uir : ElementAttachmentPoint, arity : Int, title : String, val opti
                 HGap
             } ~
             (f.lores.any).?{
-                desc("Lore".hl.larger) ~
+                desc("Trasfondo".hl.larger) ~
                 HGap ~
                 HGap ~
                 f.lores./(l => OnClick(l, Div(l.img, styles.cardX, xstyles.xx, styles.inline, styles.nomargin, xlo.pointer))).merge.div ~
@@ -1371,7 +1371,7 @@ class UI(val uir : ElementAttachmentPoint, arity : Int, title : String, val opti
                 HGap ~
                 HGap
             } ~
-            desc("Cards".hl.larger) ~
+            desc("Cartas".hl.larger) ~
             HGap ~
             desc(f.hand.num.times(Image("card-back", styles.token3x)), f.taking./(d => Image(d.id, styles.token3x)), f.takingBlind./(d => Image("card-back-small-faithful", styles.token3x))) ~
             HGap ~
@@ -1381,8 +1381,8 @@ class UI(val uir : ElementAttachmentPoint, arity : Int, title : String, val opti
             HGap ~
             HGap ~
             (f.outraged.any).?{
-                desc("Outrage".hl.larger) ~
-                more("(resources of these type can't be used for actions)") ~
+                desc("Indignación".hl.larger) ~
+                more("(los recursos de este tipo no se pueden usar para acciones)") ~
                 HGap ~
                 HGap ~
                 desc(f.outraged./(r => Image(r.name + "-outrage", styles.token3x))) ~
@@ -1393,7 +1393,7 @@ class UI(val uir : ElementAttachmentPoint, arity : Int, title : String, val opti
                 HGap ~
                 HGap
             } ~
-            desc("Resources".hl.larger) ~
+            desc("Recursos".hl.larger) ~
             HGap ~
             HGap ~
             desc(f.displayable./(k => Image("keys-" + k.raidable.|("x"), styles.token3x)) ++ f.overflow.num.times(Image("discard-resource", styles.token3x))) ~
@@ -1405,7 +1405,7 @@ class UI(val uir : ElementAttachmentPoint, arity : Int, title : String, val opti
             HGap ~
             HGap ~
             HGap ~
-            desc("Cities".hl.larger) ~
+            desc("Ciudades".hl.larger) ~
             HGap ~
             HGap ~
             desc(systems./~(f.at(_).cities)./(u => Image(u.faction.short + "-city" + f.damaged.has(u).??("-damaged"), styles.token3x)),
@@ -1417,14 +1417,14 @@ class UI(val uir : ElementAttachmentPoint, arity : Int, title : String, val opti
                     Image("building-empty-plus-3", styles.token3x),
                 ).drop(5 - f.pooled(City))
             ) ~
-            (f.pooled(City) < 2).?(desc("Total bonus for won ambitions", "+" ~ ((f.pooled(City) < 2).??(2) + (f.pooled(City) < 1).??(3)).power)) ~
+            (f.pooled(City) < 2).?(desc("Bonificación total por ambiciones ganadas", "+" ~ ((f.pooled(City) < 2).??(2) + (f.pooled(City) < 1).??(3)).power)) ~
             HGap ~
             HGap ~
             HGap ~
             HGap ~
             HGap ~
             HGap ~
-            desc("Starports".hl.larger) ~
+            desc("Puertos espaciales".hl.larger) ~
             HGap ~
             HGap ~
             desc(systems./~(f.at(_).starports)./(u => Image(u.faction.short + "-" + starport + f.damaged.has(u).??("-damaged"), styles.token3x)), f.pooled(Starport).times(Image(starport + "-empty", styles.token3x))) ~
@@ -1434,7 +1434,7 @@ class UI(val uir : ElementAttachmentPoint, arity : Int, title : String, val opti
             HGap ~
             HGap ~
             HGap ~
-            desc("Ships".hl.larger) ~
+            desc("Naves".hl.larger) ~
             HGap ~
             HGap ~
             (systems./~(f.at(_).ships)./(u => Image(u.faction.short + "-ship" + f.damaged.has(u).??("-damaged"), styles.ship3x)) ++ f.pooled(Ship).times(Image("ship-empty", styles.ship3x))).grouped(5)./(desc) ~
@@ -1444,7 +1444,7 @@ class UI(val uir : ElementAttachmentPoint, arity : Int, title : String, val opti
             HGap ~
             HGap ~
             HGap ~
-            desc("Agents".hl.larger) ~
+            desc("Agentes".hl.larger) ~
             HGap ~
             HGap ~
             desc(game.market./~(m => Influence(m.index).$).%(_.faction == f)./(u => Image(u.faction.short + "-agent", styles.ship3x)), f.pooled(Agent).times(Image("agent-empty", styles.ship3x))) ~
@@ -1455,7 +1455,7 @@ class UI(val uir : ElementAttachmentPoint, arity : Int, title : String, val opti
             HGap ~
             HGap ~
             fixActionElem(f.trophies.any.? {
-                desc("Trophies".hl.larger) ~
+                desc("Trofeos".hl.larger) ~
                 HGap ~
                 HGap ~
                 f.trophies./(u => Image(game.showFigure(u, 1).image, (u.piece == Ship).?(styles.ship3x).|(styles.ship3x))).grouped(5)./(desc) ~
@@ -1467,7 +1467,7 @@ class UI(val uir : ElementAttachmentPoint, arity : Int, title : String, val opti
                 HGap
             }) ~
             (f.captives.any).? {
-                desc("Captives".hl.larger) ~
+                desc("Cautivos".hl.larger) ~
                 HGap ~
                 HGap ~
                 desc(f.captives./(u => Image(game.showFigure(u).image, (u.piece == Ship).?(styles.ship3x).|(styles.ship3x)))) ~
@@ -1479,7 +1479,7 @@ class UI(val uir : ElementAttachmentPoint, arity : Int, title : String, val opti
                 HGap
             } ~
             (f.loyal.any).? {
-                desc("Guild Cards".hl.larger) ~
+                desc("Cartas de gremio".hl.larger) ~
                 HGap ~
                 f.loyal./(c => OnClick(c, Div(Image(c.id, styles.courtCard), styles.cardX, xstyles.xx, styles.inline, styles.nomargin, xlo.pointer))).merge.div ~
                 HGap ~
