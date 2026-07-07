@@ -903,7 +903,7 @@ object Runner {
                         case ManualRollSelectAction(dieIndex, dieType, faceIndex, value, desc) =>
                             manualRollState match {
                                 case Some((origContinue, dice, types, results, onComplete, faction)) =>
-                                    val newResults = results :+ value
+                                    val newResults = $((results :+ value): _*)
                                     if (dice.tail.nonEmpty) {
                                         val nextDice = dice.tail
                                         val nextTypes = types.tail
