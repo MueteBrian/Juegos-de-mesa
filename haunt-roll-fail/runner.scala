@@ -663,7 +663,7 @@ object Runner {
                     } else {
                         manualRollState = Some((c, dice.toList, dice./(_ => dieType).toList, $(), results => {
                             val typedResults = results.asInstanceOf[List[Any]]
-                            UIRecord("#roll_manual", c, rolled(typedResults.asInstanceOf[Nothing]))
+                            UIRecord("#roll_manual", c, rolled($(typedResults: _*).asInstanceOf[Nothing]))
                         }, faction))
                         
                         val nextDie = dice.head
@@ -690,7 +690,7 @@ object Runner {
                         manualRollState = Some((c, allDice.map(x => x._1).toList, allDice.map(x => x._2).toList, $(), results => {
                             val res1 = results.take(dice1.length).asInstanceOf[List[Any]]
                             val res2 = results.drop(dice1.length).asInstanceOf[List[Any]]
-                            UIRecord("#roll2_manual", c, rolled(res1.asInstanceOf[Nothing], res2.asInstanceOf[Nothing]))
+                            UIRecord("#roll2_manual", c, rolled($(res1: _*).asInstanceOf[Nothing], $(res2: _*).asInstanceOf[Nothing]))
                         }, faction))
                         
                         val (nextDie, dieType) = allDice.head
@@ -718,7 +718,7 @@ object Runner {
                             val res1 = results.take(dice1.length).asInstanceOf[List[Any]]
                             val res2 = results.slice(dice1.length, dice1.length + dice2.length).asInstanceOf[List[Any]]
                             val res3 = results.drop(dice1.length + dice2.length).asInstanceOf[List[Any]]
-                            UIRecord("#roll3_manual", c, rolled(res1.asInstanceOf[Nothing], res2.asInstanceOf[Nothing], res3.asInstanceOf[Nothing]))
+                            UIRecord("#roll3_manual", c, rolled($(res1: _*).asInstanceOf[Nothing], $(res2: _*).asInstanceOf[Nothing], $(res3: _*).asInstanceOf[Nothing]))
                         }, faction))
                         
                         val (nextDie, dieType) = allDice.head
