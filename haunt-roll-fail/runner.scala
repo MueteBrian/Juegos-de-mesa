@@ -662,7 +662,7 @@ object Runner {
                         UIRecord("#roll", c, rolled($()))
                     } else {
                         manualRollState = Some((c, dice, dice./(_ => dieType), $(), results => {
-                            UIRecord("#roll_manual", c, rolled(results.asInstanceOf[Nothing]))
+                            UIRecord("#roll_manual", c, rolled.asInstanceOf[$[Any] => ExternalAction](results))
                         }, faction))
                         
                         val nextDie = dice.head
@@ -689,7 +689,7 @@ object Runner {
                         manualRollState = Some((c, $(allDice.map(x => x._1): _*), $(allDice.map(x => x._2): _*), $(), results => {
                             val res1 = results.take(dice1.length)
                             val res2 = results.drop(dice1.length)
-                            UIRecord("#roll2_manual", c, rolled(res1.asInstanceOf[Nothing], res2.asInstanceOf[Nothing]))
+                            UIRecord("#roll2_manual", c, rolled.asInstanceOf[($[Any], $[Any]) => ExternalAction](res1, res2))
                         }, faction))
                         
                         val (nextDie, dieType) = allDice.head
@@ -717,7 +717,7 @@ object Runner {
                             val res1 = results.take(dice1.length)
                             val res2 = results.slice(dice1.length, dice1.length + dice2.length)
                             val res3 = results.drop(dice1.length + dice2.length)
-                            UIRecord("#roll3_manual", c, rolled(res1.asInstanceOf[Nothing], res2.asInstanceOf[Nothing], res3.asInstanceOf[Nothing]))
+                            UIRecord("#roll3_manual", c, rolled.asInstanceOf[($[Any], $[Any], $[Any]) => ExternalAction](res1, res2, res3))
                         }, faction))
                         
                         val (nextDie, dieType) = allDice.head
