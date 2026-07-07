@@ -101,6 +101,13 @@ class BotEOC(faction : Faction, bot : Faction => EvalBot, val candidatesLimit: I
                             })
                             case MultiAsk(l, _) => process(l.first)
                             case DelayedContinue(_, c) => c
+                            case Roll(d1, roll, _) => execute(roll(
+                                d1.of[BattleDie].distinct.single./~(_.ownApprox.take(d1.num))
+                            ))
+                            case Roll2(d1, d2, roll, _) => execute(roll(
+                                d1.of[BattleDie].distinct.single./~(_.ownApprox.take(d1.num)),
+                                d2.of[BattleDie].distinct.single./~(_.ownApprox.take(d2.num))
+                            ))
                             case Roll3(d1, d2, d3, roll, _) => execute(roll(
                                 d1.of[BattleDie].distinct.single./~(_.ownApprox.take(d1.num)),
                                 d2.of[BattleDie].distinct.single./~(_.ownApprox.take(d2.num)),
@@ -174,6 +181,8 @@ class BotEOC(faction : Faction, bot : Faction => EvalBot, val candidatesLimit: I
                             })
                             case MultiAsk(l, _) => process(l.shuffle.first)
                             case DelayedContinue(_, c) => c
+                            case Roll(d1, roll, _) => execute(roll(d1./(_.roll())))
+                            case Roll2(d1, d2, roll, _) => execute(roll(d1./(_.roll()), d2./(_.roll())))
                             case Roll3(d1, d2, d3, roll, _) => execute(roll(d1./(_.roll()), d2./(_.roll()), d3./(_.roll())))
                             case Shuffle(l, f, _) => execute(f(l.shuffle))
                         }
