@@ -332,26 +332,29 @@ object GoodGame {
                 }
             } ~
             (post & path("api" / "gemini" / "decide")) {
-                entity(as[String]) { prompt =>
-                    val apiKey = getApiKey()
-                    if (apiKey.isEmpty) {
-                        complete(StatusCodes.InternalServerError, "GEMINI_API_KEY is not configured")
-                    } else {
-                        val uri = s"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey"
-                        val escapedPrompt = "\"" + prompt.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "") + "\""
-                        val jsonEntity = HttpEntity(ContentTypes.`application/json`, 
-                            s"""{
-                               |  "contents": [{
-                               |    "parts": [{"text": $escapedPrompt}]
-                               |  }]
-                               |}""".stripMargin)
-                        
-                        val responseFuture = Http().singleRequest(HttpRequest(
-                            method = HttpMethods.POST,
-                            uri = uri,
-                            entity = jsonEntity
-                        ))
-                        complete(responseFuture)
+                extractRequestEntity { entity =>
+                    onSuccess(entity.toStrict(scala.concurrent.duration.FiniteDuration(5, java.util.concurrent.TimeUnit.SECONDS))) { strictEntity =>
+                        val prompt = strictEntity.data.utf8String
+                        val apiKey = getApiKey()
+                        if (apiKey.isEmpty) {
+                            complete(StatusCodes.InternalServerError, "GEMINI_API_KEY is not configured")
+                        } else {
+                            val uri = s"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey"
+                            val escapedPrompt = "\"" + prompt.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "") + "\""
+                            val jsonEntity = HttpEntity(ContentTypes.`application/json`, 
+                                s"""{
+                                   |  "contents": [{
+                                   |    "parts": [{"text": $escapedPrompt}]
+                                   |  }]
+                                   |}""".stripMargin)
+                            
+                            val responseFuture = Http().singleRequest(HttpRequest(
+                                method = HttpMethods.POST,
+                                uri = uri,
+                                entity = jsonEntity
+                            ))
+                            complete(responseFuture)
+                        }
                     }
                 }
             }

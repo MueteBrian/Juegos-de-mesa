@@ -20,12 +20,12 @@ class FetchCompute(prompt: String) extends Compute[String] {
         result match {
             case Some(r) => onResult(r)
             case None =>
-                val headers = new dom.Headers()
-                headers.append("Content-Type", "text/plain")
+                val headersObj = new dom.Headers()
+                headersObj.append("Content-Type", "text/plain")
                 val requestInit = new dom.RequestInit {
                     method = dom.HttpMethod.POST
                     body = prompt
-                    headers = headers
+                    headers = headersObj
                 }
                 dom.window.fetch("/api/gemini/decide", requestInit)
                   .asInstanceOf[scala.scalajs.js.Dynamic]
