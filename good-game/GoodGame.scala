@@ -21,7 +21,13 @@ object GoodGame {
                 val source = scala.io.Source.fromFile(file)
                 try {
                     val line = source.getLines().find(_.startsWith("GEMINI_API_KEY="))
-                    line.map(_.split("=", 2)(1).trim).getOrElse("")
+                    line.map { l =>
+                        val raw = l.split("=", 2)(1).trim
+                        var k = raw
+                        if (k.startsWith("\"") && k.endsWith("\"")) k = k.drop(1).dropRight(1)
+                        if (k.startsWith("'") && k.endsWith("'")) k = k.drop(1).dropRight(1)
+                        k
+                    }.getOrElse("")
                 } finally {
                     source.close()
                 }
@@ -339,7 +345,7 @@ object GoodGame {
                         if (apiKey.isEmpty) {
                             complete(StatusCodes.InternalServerError, "GEMINI_API_KEY is not configured")
                         } else {
-                            val uri = s"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey"
+                            val uri = s"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$apiKey"
                             val escapedPrompt = "\"" + prompt.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "") + "\""
                             val jsonEntity = HttpEntity(ContentTypes.`application/json`, 
                                 s"""{
@@ -353,7 +359,18 @@ object GoodGame {
                                 uri = uri,
                                 entity = jsonEntity
                             ))
-                            complete(responseFuture)
+                            
+                            val loggedResponseFuture = responseFuture.flatMap { response =>
+                                response.entity.toStrict(scala.concurrent.duration.FiniteDuration(5, java.util.concurrent.TimeUnit.SECONDS)).map { strict =>
+                                    println("--- GEMINI API RESPONSE ---")
+                                    println(s"Status: ${response.status}")
+                                    println(s"Body: ${strict.data.utf8String}")
+                                    println("---------------------------")
+                                    response.withEntity(strict)
+                                }
+                            }
+                            
+                            complete(loggedResponseFuture)
                         }
                     }
                 }
