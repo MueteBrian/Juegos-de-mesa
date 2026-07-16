@@ -351,7 +351,14 @@ object GoodGame {
                                 s"""{
                                    |  "contents": [{
                                    |    "parts": [{"text": $escapedPrompt}]
-                                   |  }]
+                                   |  }],
+                                   |  "generationConfig": {
+                                   |    "maxOutputTokens": 4,
+                                   |    "temperature": 0.0,
+                                   |    "thinkingConfig": {
+                                   |      "thinkingBudget": 0
+                                   |    }
+                                   |  }
                                    |}""".stripMargin)
                             
                             val responseFuture = Http().singleRequest(HttpRequest(

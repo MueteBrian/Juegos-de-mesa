@@ -22,11 +22,22 @@ class FetchCompute(prompt: String) extends Compute[String] {
             case None =>
                 val headersObj = new dom.Headers()
                 headersObj.append("Content-Type", "text/plain")
+                
+                val controller = scala.scalajs.js.Dynamic.newInstance(scala.scalajs.js.Dynamic.global.AbortController)()
+                val signal = controller.signal
+                
+                scala.scalajs.js.timers.setTimeout(6000) {
+                    controller.abort()
+                }
+                
                 val requestInit = new dom.RequestInit {
                     method = dom.HttpMethod.POST
                     body = prompt
                     headers = headersObj
                 }
+                
+                requestInit.asInstanceOf[scala.scalajs.js.Dynamic].signal = signal
+                
                 dom.window.fetch("/api/gemini/decide", requestInit)
                   .asInstanceOf[scala.scalajs.js.Dynamic]
                   .then((response: scala.scalajs.js.Dynamic) => response.text())
