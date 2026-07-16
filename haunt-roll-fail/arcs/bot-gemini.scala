@@ -106,8 +106,10 @@ class BotGemini(val self: Faction, val fallback: EvalBot) extends EvalBot {
 
     private def parseIndex(response: String, max: Int): Int = {
         try {
+            val parsed = scala.scalajs.js.JSON.parse(response).asInstanceOf[scala.scalajs.js.Dynamic]
+            val text = parsed.candidates(0).content.parts(0).text.asInstanceOf[String].trim
             val pattern = """\d+""".r
-            val numStr = pattern.findFirstIn(response).getOrElse("-1")
+            val numStr = pattern.findFirstIn(text).getOrElse("-1")
             val idx = numStr.toInt
             if (idx >= 0 && idx < max) idx else -1
         } catch {
