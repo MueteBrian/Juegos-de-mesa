@@ -92,20 +92,8 @@ object HRF {
     val replay = flag("replay")
 
     val metaUIs : $[(MetaGame, BaseUI)] = $(
-        root.Meta -> root.UI,
-        root.MetaAdset -> root.UI,
-        root.MetaMirror -> root.UI,
-        cthw.Meta -> cthw.UI,
-        dwam.Meta -> dwam.UI,
-        vast.Meta -> vast.UI,
         arcs.Meta -> arcs.UI,
         arcs.MetaBR -> arcs.UI,
-        doms.Meta -> doms.UI,
-        inis.Meta -> inis.UI,
-        coup.Meta -> coup.UI,
-        sehi.Meta -> sehi.UI,
-        suok.Meta -> suok.UI,
-        yarg.Meta -> yarg.UI,
     )
 
     val metas = metaUIs.lefts
