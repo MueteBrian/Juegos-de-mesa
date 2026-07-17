@@ -41,19 +41,19 @@ class FetchCompute(prompt: String) extends Compute[String] {
                 dom.window.fetch("/api/gemini/decide", requestInit)
                   .asInstanceOf[scala.scalajs.js.Dynamic]
                   .then(
-                      (response: scala.scalajs.js.Dynamic) => response.text(),
-                      (err: scala.scalajs.js.Any) => {
-                          result = Some("")
-                          continue(() => onResult(""))
-                          ""
-                      }
-                  )
-                  .then(
-                      (text: String) => {
-                          if (text != "") {
-                              result = Some(text)
-                              continue(() => onResult(text))
-                          }
+                      (response: scala.scalajs.js.Dynamic) => {
+                          response.text()
+                            .asInstanceOf[scala.scalajs.js.Dynamic]
+                            .then(
+                                (text: String) => {
+                                    result = Some(text)
+                                    continue(() => onResult(text))
+                                },
+                                (err: scala.scalajs.js.Any) => {
+                                    result = Some("")
+                                    continue(() => onResult(""))
+                                }
+                            )
                       },
                       (err: scala.scalajs.js.Any) => {
                           result = Some("")
