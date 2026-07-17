@@ -22,53 +22,54 @@ class FetchCompute(prompt: String) extends Compute[String] {
                 println("[FetchCompute.get] returning cached result")
                 onResult(r)
             case None =>
-                val headersObj = new dom.Headers()
-                headersObj.append("Content-Type", "text/plain")
-                
-                val controller = scala.scalajs.js.Dynamic.newInstance(scala.scalajs.js.Dynamic.global.AbortController)()
-                val signal = controller.signal
-                
-                println("[FetchCompute.get] Setting up 6000ms timeout timer")
-                scala.scalajs.js.timers.setTimeout(6000) {
-                    println("[FetchCompute.get] timeout triggered: aborting request")
-                    controller.abort()
+                println("[FetchCompute.get] Initializing JS fetch helper")
+                val jsFetch = scala.scalajs.js.Dynamic.global.eval(
+                    """
+                    (url, prompt, timeoutMs, onResolve, onReject) => {
+                        const controller = new AbortController();
+                        const signal = controller.signal;
+                        const timer = setTimeout(() => {
+                            console.log("[JS fetch] timeout triggered, aborting request");
+                            controller.abort();
+                        }, timeoutMs);
+
+                        fetch(url, {
+                            method: "POST",
+                            body: prompt,
+                            headers: { "Content-Type": "text/plain" },
+                            signal: signal
+                        })
+                        .then(response => {
+                            clearTimeout(timer);
+                            console.log("[JS fetch] HTTP response received with status:", response.status);
+                            return response.text();
+                        })
+                        .then(text => {
+                            console.log("[JS fetch] Successfully read response body. Length:", text.length);
+                            onResolve(text);
+                        })
+                        .catch(err => {
+                            clearTimeout(timer);
+                            console.error("[JS fetch] request failed or aborted:", err.toString());
+                            onReject(err.toString());
+                        });
+                    }
+                    """
+                ).asInstanceOf[scala.scalajs.js.Function5[String, String, Int, scala.scalajs.js.Function1[String, Any], scala.scalajs.js.Function1[String, Any], Any]]
+
+                val successCallback: scala.scalajs.js.Function1[String, Any] = (text: String) => {
+                    println("[FetchCompute.get] successCallback invoked")
+                    result = Some(text)
+                    continue(() => onResult(text))
                 }
-                
-                val requestInit = new dom.RequestInit {
-                    method = dom.HttpMethod.POST
-                    body = prompt
-                    headers = headersObj
+
+                val failureCallback: scala.scalajs.js.Function1[String, Any] = (err: String) => {
+                    println(s"[FetchCompute.get] failureCallback invoked: $err")
+                    result = Some("")
+                    continue(() => onResult(""))
                 }
-                
-                requestInit.asInstanceOf[scala.scalajs.js.Dynamic].signal = signal
-                
-                println("[FetchCompute.get] Starting HTTP POST request to /api/gemini/decide")
-                dom.window.fetch("/api/gemini/decide", requestInit)
-                  .asInstanceOf[scala.scalajs.js.Dynamic]
-                  .then(
-                      (response: scala.scalajs.js.Dynamic) => {
-                          println("[FetchCompute.get] HTTP response received. Reading text...")
-                          response.text()
-                            .asInstanceOf[scala.scalajs.js.Dynamic]
-                            .then(
-                                (text: String) => {
-                                    println(s"[FetchCompute.get] Successfully read response body. Length: ${text.length}")
-                                    result = Some(text)
-                                    continue(() => onResult(text))
-                                },
-                                (err: scala.scalajs.js.Any) => {
-                                    println(s"[FetchCompute.get] Error reading response body: $err")
-                                    result = Some("")
-                                    continue(() => onResult(""))
-                                }
-                            )
-                      },
-                      (err: scala.scalajs.js.Any) => {
-                          println(s"[FetchCompute.get] Fetch request failed/aborted: $err")
-                          result = Some("")
-                          continue(() => onResult(""))
-                      }
-                  )
+
+                jsFetch("/api/gemini/decide", prompt, 9000, successCallback, failureCallback)
         }
     }
 }
