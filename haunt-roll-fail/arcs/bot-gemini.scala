@@ -18,7 +18,9 @@ class FetchCompute(prompt: String) extends Compute[String] {
 
     def get(continue: (() => Unit) => Unit)(onResult: String => Unit): Unit = {
         result match {
-            case Some(r) => onResult(r)
+            case Some(r) => 
+                println("[FetchCompute.get] returning cached result")
+                onResult(r)
             case None =>
                 val headersObj = new dom.Headers()
                 headersObj.append("Content-Type", "text/plain")
@@ -26,7 +28,9 @@ class FetchCompute(prompt: String) extends Compute[String] {
                 val controller = scala.scalajs.js.Dynamic.newInstance(scala.scalajs.js.Dynamic.global.AbortController)()
                 val signal = controller.signal
                 
+                println("[FetchCompute.get] Setting up 6000ms timeout timer")
                 scala.scalajs.js.timers.setTimeout(6000) {
+                    println("[FetchCompute.get] timeout triggered: aborting request")
                     controller.abort()
                 }
                 
@@ -38,24 +42,29 @@ class FetchCompute(prompt: String) extends Compute[String] {
                 
                 requestInit.asInstanceOf[scala.scalajs.js.Dynamic].signal = signal
                 
+                println("[FetchCompute.get] Starting HTTP POST request to /api/gemini/decide")
                 dom.window.fetch("/api/gemini/decide", requestInit)
                   .asInstanceOf[scala.scalajs.js.Dynamic]
                   .then(
                       (response: scala.scalajs.js.Dynamic) => {
+                          println("[FetchCompute.get] HTTP response received. Reading text...")
                           response.text()
                             .asInstanceOf[scala.scalajs.js.Dynamic]
                             .then(
                                 (text: String) => {
+                                    println(s"[FetchCompute.get] Successfully read response body. Length: ${text.length}")
                                     result = Some(text)
                                     continue(() => onResult(text))
                                 },
                                 (err: scala.scalajs.js.Any) => {
+                                    println(s"[FetchCompute.get] Error reading response body: $err")
                                     result = Some("")
                                     continue(() => onResult(""))
                                 }
                             )
                       },
                       (err: scala.scalajs.js.Any) => {
+                          println(s"[FetchCompute.get] Fetch request failed/aborted: $err")
                           result = Some("")
                           continue(() => onResult(""))
                       }
@@ -66,7 +75,9 @@ class FetchCompute(prompt: String) extends Compute[String] {
 
 class BotGemini(val self: Faction, val fallback: EvalBot) extends EvalBot {
     def eval(actions : $[UserAction])(implicit game : Game) : Compute[$[ActionEval]] = {
+        println(s"[BotGemini.eval] Faction: ${self.name}, Actions count: ${actions.num}")
         if (actions.num <= 1) {
+            println("[BotGemini.eval] Actions count <= 1, using fallback bot")
             return fallback.eval(actions)
         }
 
@@ -83,17 +94,23 @@ class BotGemini(val self: Faction, val fallback: EvalBot) extends EvalBot {
         }
 
         if (!isStrategic) {
+            println("[BotGemini.eval] Non-strategic actions, using fallback bot")
             return fallback.eval(actions)
         }
 
+        println("[BotGemini.eval] Strategic actions detected, calling Gemini")
         val prompt = constructPrompt(self, actions)
 
         new FetchCompute(prompt).flatMap { responseText =>
+            println(s"[BotGemini.eval] flatMap callback triggered. responseText: $responseText")
             val chosenIndex = parseIndex(responseText, actions.num)
+            println(s"[BotGemini.eval] parsed chosenIndex: $chosenIndex")
             if (chosenIndex >= 0 && chosenIndex < actions.num) {
                 val chosenAction = actions(chosenIndex)
+                println(s"[BotGemini.eval] chosen action: ${chosenAction.unwrap.toString}")
                 Just(actions./{ a => ActionEval(a, if (a == chosenAction) $(Evaluation(10000000, "gemini")) else $) })
             } else {
+                println("[BotGemini.eval] Index out of range or parsing failed, using fallback bot")
                 fallback.eval(actions)
             }
         }

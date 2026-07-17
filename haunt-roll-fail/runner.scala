@@ -941,13 +941,23 @@ object Runner {
 
                 case UIRecordCompute(m, c, f, a) =>
                     var n = 0
+                    println(s"[runner] UIRecordCompute started. info=$m, faction=$f")
 
                     stop { later =>
-                        a.get(new hrf.Quants(500, 200, () => later(() => {
-                            n += 1
-                            ui.wait(self, $(f), Empty)
-                            UIStopTest
-                        })).continue)(l => later(() => UIRecord(m, c, l)))
+                        a.get(new hrf.Quants(500, 200, () => {
+                            println("[runner] Quants yield triggered: calling later wait UI update")
+                            later(() => {
+                                n += 1
+                                ui.wait(self, $(f), Empty)
+                                UIStopTest
+                            })
+                        }).continue)(l => {
+                            println(s"[runner] Compute completed successfully! Selected Action: ${l.unwrap.toString}")
+                            later(() => {
+                                println("[runner] Transitioning state to UIRecord")
+                                UIRecord(m, c, l)
+                            })
+                        })
                     }
 
                 case UIRecord(m, c, a) =>
